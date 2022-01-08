@@ -4,13 +4,23 @@
 #
 #    pip-compile
 #
+attrs==21.4.0
+    # via jsonschema
 certifi==2021.10.8
     # via requests
 charset-normalizer==2.0.10
     # via requests
 idna==3.3
     # via requests
+importlib-resources==5.4.0
+    # via jsonschema
+jsonschema==4.3.3
+    # via -r requirements.in
+pyrsistent==0.18.0
+    # via jsonschema
 requests==2.27.1
     # via -r requirements.in
 urllib3==1.26.8
     # via requests
+zipp==3.7.0
+    # via importlib-resources
