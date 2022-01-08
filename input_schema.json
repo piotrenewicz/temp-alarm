@@ -1,0 +1,36 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://example.com/product.schema.json",
+    "title": "Sensors schema",
+    "description": "Sensors schema",
+    "type": "object",
+    "properties": {
+        "send_alarm_to_mails": {
+            "description": "The unique identifier for a product",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "sensors": {
+            "description": "List of objects representing a sensor",
+            "type": "array",
+            "items": {
+                "properties": {
+                    "ip": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "min": {
+                        "type": "number"
+                    },
+                    "max": {
+                        "type": "number"
+                    }
+                }
+            }
+        }
+    }
+}
