@@ -17,7 +17,16 @@ TEMPLATE_ALARM_MESSAGE = """\
     """
 
 
-def generate_report_body(alarmed_sensors: "list[dict]") -> str:
+def get_auto_sender(recipient_list: list):
+    def auto_sender(alarmed_sensor: dict, reason, value):
+        report = generate_report_body(alarmed_sensor, reason, value)
+        print(report)
+        send_message(recipient_list, report)
+
+    return auto_sender
+
+
+def generate_report_body(alarmed_sensor: dict, reason, value) -> str:
     """Accept a list of alarmed sensor objects, use it to fill in the pattern:
         ...
         Sensor name X/00/00:
@@ -30,14 +39,29 @@ def generate_report_body(alarmed_sensors: "list[dict]") -> str:
     """
     body = ""
 
-    for sensor in alarmed_sensors:
-        name, measured_temp, min_temp, max_temp = sensor["name"], alarmed_sensors[
-            "measured_temp"], alarmed_sensors["min"], alarmed_sensors["max"]
+    name, min_temp, max_temp = alarmed_sensor["name"], alarmed_sensor["min"], alarmed_sensor["max"]
 
-        if sensor["reachable"]:
-            body += f"{name}:\n\tMeasured temperature: {measured_temp}°C\n\tMin temperature: {min_temp}°C\n\tMax temperature: {max_temp}°C\n"
+    if reason == 2:
+        if value == 0:
+            body += f"{name}:\n\tOffline status over.\n\tSensor access restored\n"
         else:
-            body += f"{name}:\n\tUnreachable.\n"
+            body += f"{name}:\n\tOffline Alarm!!\n\tSensor unreachable.\n"
+    else:
+        alarm_state_text = " alarm!!"
+        if reason > 2:
+            reason -= 3
+            alarm_state_text = " status over."
+
+        alarm_type_text = "Low temp"
+        if reason:
+            alarm_type_text = "High temp"
+        # 0 - low temp,
+        # 1 - high temp
+        # 2 - unreachable
+        # 3 - no longer low
+        # 4 - no longer high
+
+        body += f"{name}:\n\t{alarm_type_text}{alarm_state_text}\n\tMeasured temperature: {value}°C\n\tMin temperature: {min_temp}°C\n\tMax temperature: {max_temp}°C\n"
 
     return body
 

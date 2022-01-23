@@ -19,8 +19,8 @@ def main():
     deadzone = 3
     thread_pid_table = dict()
     sensors = glob["sensors"]
-    mail_list = glob["send_alarm_to_mails"]
     cooldown = glob["check_cooldown"]
+    sender = mail_sending.get_auto_sender(glob["send_alarm_to_mails"])
     timeout = glob["sensor_timeout"]
     sensor_count = len(sensors)
     alarms = [[False, False, False] for i in range(sensor_count)]
@@ -40,31 +40,35 @@ def main():
             # since we got here we know that the sensor has responded
             alarm_flags[2] = False
             # this sensor was unreachable previously, send e-mail about it coming back online
-            pass
+            sender(sensor, 2, 0)
 
-        print(current_temp)
+        # print(current_temp)
 
         if alarm_flags[0]:
             if current_temp >= min_temp + deadzone:
                 # Release low temp alarm
                 alarm_flags[0] = False
                 # Send mail no longer temp low.
+                sender(sensor, 3, current_temp)
         else:
             if current_temp <= min_temp:
                 # Begin low temp alarm
                 alarm_flags[0] = True
                 # Send email temp low.
+                sender(sensor, 0, current_temp)
 
         if alarm_flags[1]:
             if current_temp <= max_temp - deadzone:
                 # Release high temp alarm
                 alarm_flags[1] = False
                 # Send mail no longer temp high.
+                sender(sensor, 4, current_temp)
         else:
             if current_temp >= max_temp:
                 # Begin high temp alarm
                 alarm_flags[1] = True
                 # Send email temp high.
+                sender(sensor, 1, current_temp)
 
     # begin looping
     running = True
