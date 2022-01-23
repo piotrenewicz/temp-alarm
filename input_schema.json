@@ -5,22 +5,29 @@
     "description": "Sensors schema",
     "type": "object",
     "properties": {
+        "sensor_timeout": {
+            "description": "Timeout in seconds for the sensor to be considered unreachable.",
+            "type": "number"
+        },
         "send_alarm_to_mails": {
-            "description": "The unique identifier for a product",
+            "description": "List of alarm mail recipients.",
             "type": "array",
             "items": {
                 "type": "string"
             }
         },
         "sensors": {
-            "description": "List of objects representing a sensor",
+            "description": "List of objects representing a sensor.",
             "type": "array",
             "items": {
                 "properties": {
+                    "name": {
+                        "type": "string"
+                    },
                     "ip": {
                         "type": "string"
                     },
-                    "name": {
+                    "protocol": {
                         "type": "string"
                     },
                     "min": {
