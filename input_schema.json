@@ -9,6 +9,10 @@
             "description": "Timeout in seconds for the sensor to be considered unreachable.",
             "type": "number"
         },
+        "check_cooldown": {
+            "description": "Time between sensor checks",
+            "type": "number"
+        },
         "send_alarm_to_mails": {
             "description": "List of alarm mail recipients.",
             "type": "array",

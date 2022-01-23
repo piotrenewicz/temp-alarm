@@ -22,10 +22,11 @@ def get_input() -> dict:
 
     return input_object
 
-
-def get_split_input() -> "tuple[list,list]":
-    input_object = get_input()
-    sensors = input_object["sensors"]
-    mail_list = input_object["send_alarm_to_mails"]
-
-    return sensors, mail_list
+#
+# def get_split_input() -> "tuple[list,list,dict]":
+#     input_object = get_input()
+#     sensors = input_object["sensors"]
+#     mail_list = input_object["send_alarm_to_mails"]
+#     glob = input_object
+#
+#     return sensors, mail_list
