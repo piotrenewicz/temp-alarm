@@ -1,36 +1,59 @@
 import smtplib
 from os import environ
-#
-# HERE THE WHOLE FUNCTION TO BE REWORKED
-#
-TEMPLATE_ALARM_MESSAGE_SUBJECT = "SENSOR ALARM! {low_or_high}({temperature}°C) on {sensor_name}"
-TEMPLATE_ALARM_MESSAGE_BODY = "{low_or_high} temperature detected on {sensor_name}.\n\
-    Min temperature: {min_temperature}°C\n\
-    Max temperature: {max_temperature}°C\n\
-    Measured temperature: {measured_temperature}°C"
+from dotenv import load_dotenv
+
+load_dotenv()
+
+SMTP_HOST = environ.get('SMTP_HOST')
+SMTP_PORT = environ.get('SMTP_PORT')
+SMTP_EMAIL_ADDR = environ.get('SMTP_EMAIL_ADDR')
+SMTP_EMAIL_PASS = environ.get('SMTP_EMAIL_PASS')
+
+TEMPLATE_ALARM_MESSAGE = """\
+    From: {from_mail}
+    Subject: SENSOR ALARM! One or more temperature sensors aren't OK.
+    Report:
+    {report_body}
+    """
 
 
-def send_message(recipient_list, sensor_object, measured_temp: int):
-    fromaddr = environ.get('EMAIL')  # email address from .env file
-    # email password from .env file
-    email_password = environ.get('EMAIL_PASS')
-    toaddr = "address@example.edu.pl"  # recipient email address
+def generate_report_body(alarmed_sensors: "list[dict]") -> str:
+    """Accept a list of alarmed sensor objects, use it to fill in the pattern:
+        ...
+        Sensor name X/00/00:
+            Measured temperatue: 00°C
+            Min temperatue: 00°C
+            Max temperatue: 00°C
+        Sensor name X/00/00:
+            Unreachable.
+        ...
+    """
+    body = ""
 
-    smtp_server = 'smtp.gmail.com'
-    smtp_port = 587
+    for sensor in alarmed_sensors:
+        name, measured_temp, min_temp, max_temp = sensor["name"], alarmed_sensors[
+            "measured_temp"], alarmed_sensors["min"], alarmed_sensors["max"]
 
-    # don't know if smtplib supports mail subjects
-    subject = "Testing sending emails with python."
-    body = "The purpose of this email is only testing python smtplib library.\nPlease do not respond. Thank you."
-    message = 'Subject: {}\n\n{}'.format(subject, body)
+        if sensor["reachable"]:
+            body += f"{name}:\n\tMeasured temperature: {measured_temp}°C\n\tMin temperature: {min_temp}°C\n\tMax temperature: {max_temp}°C\n"
+        else:
+            body += f"{name}:\n\tUnreachable.\n"
 
-    server = smtplib.SMTP(smtp_server, smtp_port)
-    server.connect(smtp_server, smtp_port)
+    return body
+
+
+def send_message(recipient_list: list, report_body: str) -> None:
+    """Use mail template from constant variables, and render it with the output of the 'generate_report_body' function."""
+    report_message = TEMPLATE_ALARM_MESSAGE.format(
+        from_mail=SMTP_EMAIL_ADDR, report_body=report_body)
+
+    server = smtplib.SMTP(SMTP_HOST, SMTP_PORT)
+    server.connect(SMTP_HOST, SMTP_PORT)
     server.ehlo()
     server.starttls()
     server.ehlo()
-    server.login(fromaddr, email_password)
-    server.sendmail(fromaddr, toaddr, message)
+    server.login(SMTP_EMAIL_ADDR, SMTP_EMAIL_PASS)
+    server.sendmail(SMTP_EMAIL_ADDR, recipient_list, report_message)
     server.quit()
 
 
