@@ -87,7 +87,7 @@ def main():
             continue
 
         for idx, thread in enumerate(threads):  # if we have unresponding sensors, give up waiting,
-            if thread.is_alive():
+            if thread.is_alive() and not alarms[idx][2]:
                 alarms[idx][2] = True
                 #os.kill(thread_pid_table[idx], signal.SIGKILL)
                 # send e-mail about losing access to sensors[idx]
