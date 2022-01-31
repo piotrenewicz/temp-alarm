@@ -15,8 +15,12 @@ def validate_schema(input_object: dict) -> None:
 
 
 def get_input() -> dict:
-    with open(INPUT_FILE_NAME) as f:
-        input_object = json.load(f)
+    try:
+        with open(INPUT_FILE_NAME) as f:
+            input_object = json.load(f)
+    except FileNotFoundError:
+        print("No config found !")
+        # TODO implement default config here
 
     validate_schema(input_object)  # Validate the input
 

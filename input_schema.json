@@ -7,13 +7,41 @@
     "properties": {
         "sensor_timeout": {
             "description": "Timeout in seconds for the sensor to be considered unreachable.",
-            "type": "number"
+            "type": "number",
+            "required": true
         },
         "check_cooldown": {
             "description": "Time between sensor checks",
-            "type": "number"
+            "type": "number",
+            "required": true
         },
-        "send_alarm_to_mails": {
+        "SMTP params": {
+            "description": "Put SMTP variables here.",
+            "type": "object",
+            "properties": {
+                "HOST": {
+                    "description": "Ip address of the SMTP server used for handling e-mails",
+                    "type": "string",
+                    "required": true
+                },
+                "PORT": {
+                    "description": "Port that SMTP server listens on",
+                    "type": "number",
+                    "required": true
+                },
+                "Account address": {
+                    "description": "E-mail address of the account used for sending",
+                    "type": "string",
+                    "required": true
+                },
+                "Account password": {
+                    "description": "Password of the account used for sending",
+                    "type": "string",
+                    "required": true
+                }
+            }
+        },
+        "e-mail address list to notify": {
             "description": "List of alarm mail recipients.",
             "type": "array",
             "items": {
@@ -26,13 +54,16 @@
             "items": {
                 "properties": {
                     "name": {
-                        "type": "string"
+                        "type": "string",
+                        "required": true
                     },
                     "ip": {
-                        "type": "string"
+                        "type": "string",
+                        "required": true
                     },
                     "protocol": {
-                        "type": "string"
+                        "type": "string",
+                        "required": true
                     },
                     "min": {
                         "type": "number"
