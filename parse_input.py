@@ -22,7 +22,11 @@ def get_input() -> dict:
         print("No config found !")
         # TODO implement default config here
 
-    validate_schema(input_object)  # Validate the input
+    try:
+        validate_schema(input_object)  # Validate the input
+    except jsonschema.exceptions.ValidationError:
+        print("Error found in config!")
+
 
     return input_object
 

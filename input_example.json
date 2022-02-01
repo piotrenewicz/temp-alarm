@@ -1,0 +1,16 @@
+{
+    "sensor_timeout": 5,
+    "check_cooldown": 5,
+    "send_alarm_to_mails": [
+        "example@gmail.com"
+    ],
+    "sensors": [
+        {
+            "name": "test",
+            "ip": "210.",
+            "protocol": "virtual",
+            "min": -10,
+            "max": 30
+        }
+    ]
+}
